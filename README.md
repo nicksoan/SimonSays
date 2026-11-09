@@ -1,30 +1,30 @@
 # SimonSays
 
-A small desktop macro recorder, similar to TinyTask. Record mouse movement,
+A small Rust desktop macro recorder, similar to TinyTask. Record mouse movement,
 clicks, scrolling, and keyboard presses, then replay the sequence with its
 original timing, once or repeatedly.
 
 ## Setup
 
-Requires Python 3.10+ and a graphical desktop.
+Requires Rust 1.95 or newer (install from https://rustup.rs), a
+platform C/C++ linker, and a graphical desktop. No Python runtime is needed.
 
 ```sh
-python -m venv .venv
-# Windows:
-.venv\Scripts\activate
-# macOS / Linux:
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-python simonsays.py
+cargo run --release --locked
 ```
 
-- **Windows:** use a standard Python installation with Tcl/Tk support. Elevated
+- **Windows:** install the MSVC build tools when prompted by rustup. Elevated
   applications may require running SimonSays with matching permissions.
 - **macOS:** grant Accessibility and Input Monitoring permissions to the terminal
-  or Python application in System Settings.
-- **Linux:** requires an X11 session and Tkinter (on Debian/Ubuntu,
-  `sudo apt install python3-tk`). Global capture is not supported on a pure
-  Wayland desktop.
+  or SimonSays application in System Settings. Missing permissions can silently
+  prevent global recording; restart the application after granting them.
+- **Linux:** requires an X11 session and development libraries. On Debian/Ubuntu:
+  `sudo apt install build-essential pkg-config libx11-dev libxi-dev libxtst-dev libgl1-mesa-dev libxkbcommon-x11-0`.
+  Global capture is not supported on a pure Wayland desktop.
+
+To build without launching, run `cargo build --release --locked`. The executable
+is `target/release/simonsays` (`simonsays.exe` on Windows). Subsequent launches of
+this executable do not require Cargo or the Rust toolchain.
 
 ## Usage
 
@@ -42,8 +42,11 @@ unchanged. Avoid typing passwords or other sensitive data while recording.
 
 ## Tests
 
-The core tests use fake input controllers and need no desktop or dependencies:
+The regression tests use fake input simulation and need no running desktop.
+Linux still needs the development libraries above to compile.
 
 ```sh
-python -m unittest discover -s tests -v
+cargo test --locked
+cargo fmt --check
+cargo clippy --locked --all-targets -- -D warnings
 ```
