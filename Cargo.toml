@@ -1,0 +1,9 @@
+[package]
+name = "simonsays"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.95"
+
+[dependencies]
+eframe = { version = "=0.37.0", default-features = false, features = ["default_fonts", "glow", "x11"] }
+rdev = "=0.5.3"
